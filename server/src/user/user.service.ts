@@ -19,6 +19,8 @@ import { LoginUserVo, UserInfo } from './vo/login-user.vo';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { RefreshTokenVo } from './vo/refresh-token.vo';
+import { UserListVo } from './vo/user-list.vo';
 
 @Injectable()
 export class UserService {
@@ -158,11 +160,10 @@ export class UserService {
           this.configService.get('jwt_refresh_token_expres_time') || '7d',
       },
     );
-
-    return {
-      access_token,
-      refresh_token,
-    };
+    const vo = new RefreshTokenVo();
+    vo.access_token = access_token;
+    vo.refresh_token = refresh_token;
+    return vo;
   }
 
   async findUserDetailsById(userId: number) {
@@ -274,10 +275,10 @@ export class UserService {
       take: pageSize,
       where: condition,
     });
-    return {
-      users,
-      totalCount,
-    };
+    const vo = new UserListVo();
+    vo.users = users;
+    vo.totalCount = totalCount;
+    return vo;
   }
 
   async initData() {
